@@ -13,6 +13,7 @@ logging.basicConfig(filename='logging_es.log', level=logging.INFO,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
+
 def read_config():
     cfg = ConfigParser()
     cfg.read('./config.ini', encoding='utf-8')
@@ -56,7 +57,6 @@ def es_json(es_dict, start_time, end_time):
             http_auth=(str(es_dict['user']), str(es_dict['password'])),
             timeout=int(es_dict['timeout'])
         )
-
     except Exception as e:
         logging.error(e)
 
@@ -66,19 +66,16 @@ def es_json(es_dict, start_time, end_time):
         print_info1 = "保存索引" + i + "的数据"
         logging.info(print_info1)
         query = {
-            "query": {
-                "range": {
-                    "@timestamp": {
-                        # 大于上一次读取结束时间，小于等于本次读取开始时间
-                        "gt": start_time,
-                        "lte": end_time
-                    }
+            "range": {
+                "@timestamp": {
+                    # 大于上一次读取结束时间，小于等于本次读取开始时间
+                    "gt": start_time,
+                    "lte": end_time
                 }
-            },
-            "size": 10000
+            }
         }
         try:
-            data = Es.search(index=i, body=query)
+            data = Es.search(index=i, query=query, size=10000)
             source_list = []
             for hit in data['hits']['hits']:
                 source_data = hit['_source']

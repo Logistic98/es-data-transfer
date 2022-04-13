@@ -1,0 +1,7 @@
+[SOURCE_ES]
+host = 192.168.1.2
+port = 9200
+user = elastic
+password = elastic
+timeout = 60
+index_list = test_index1, test_index2
